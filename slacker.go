@@ -6,7 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
-	"log"
+	"encoding/json"
+	"io/ioutil"
 )
 
 const rootPath = "https://slack.com/api/"
@@ -22,6 +23,11 @@ type Member struct {
 	IsAdmin	bool	`json:"is_admin"`
 	IsOwner	bool	`json:"is_owner"`
 	IsPrimaryOwner	bool	`json:"is_primary_owner"`
+}
+
+// struct to encapsulate channel information
+type Channel struct {
+	Name	string	`"json=name"`
 }
 
 // load a token from environment variables
@@ -56,6 +62,64 @@ func GetUsers() ([]Member, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Println(response.Body)
-	return nil, nil
+	type resp struct {
+		Ok	bool
+		Members	[]Member
+	}
+	r := resp{Members: make([]Member,0)}
+	defer response.Body.Close()
+	b, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return r.Members, err
+	}
+	err = json.Unmarshal(b, &r)
+	return r.Members, err
+}
+
+// check the credentials
+func AuthTest() (bool, error) {
+	type returned struct {
+		Ok	bool	`json="ok"`
+		
+	}
+	request, err := generateRequest("auth.test")
+	if err != nil {
+		return false, err
+	}
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return false, err
+	}
+	r := returned{}
+	defer response.Body.Close()
+	b, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return false, err
+	}
+	err = json.Unmarshal(b, &r)
+	return r.Ok, nil
+}
+
+// return a list the channels
+func ChannelsList() ([]Channel, error) {
+	type respo struct {
+		Ok	bool	`"json:ok"`
+		Channels	[]Channel	`"json:channels"`
+	}
+	request, err := generateRequest("channels.list")
+	if err != nil {
+		return nil, err
+	}
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	r := respo{Channels: make([]Channel,0)}
+	defer response.Body.Close()
+	b, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return r.Channels, err
+	}
+	err = json.Unmarshal(b, &r)
+	return r.Channels, err
 }
