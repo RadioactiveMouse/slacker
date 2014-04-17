@@ -15,13 +15,13 @@ var token = ""
 
 // struct to encapsulate the member details
 type Member struct {
-	Id	string
-	Name	string
-	Deleted	bool
-	Color	string
-	IsAdmin	bool
-	IsOwner	bool
-	IsPrimaryOwner	bool
+	Id	string	`json:"id"`
+	Name	string	`json:"name"`
+	Deleted	bool	`json:"deleted"`
+	Color	string	`json:"color"`
+	IsAdmin	bool	`json:"is_admin"`
+	IsOwner	bool	`json:"is_owner"`
+	IsPrimaryOwner	bool	`json:"is_primary_owner"`
 }
 
 // load a token from environment variables
