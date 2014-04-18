@@ -29,7 +29,7 @@ type Member struct {
 
 // struct to encapsulate channel information
 type Channel struct {
-	Name string `"json=name"`
+	Name string `"json:name"`
 }
 
 // struct to encapsulate messages
@@ -219,6 +219,38 @@ func ChannelHistory(channel string, count int) ([]Message, error) {
 		return r.Messages, nil
 	}
 	return r.Messages, errors.New("Non ok value receieved from API")
+}
+
+func ChannelMark(channel string, timestamp string) (bool, error) {
+	type respo struct {
+		Ok bool `"json:ok"`
+	}
+	// modify the params
+	vals := url.Values{}
+	vals.Set("channel", channel)
+	vals.Set("ts", timestamp)
+	request, err := generateRequest("channels.mark", vals)
+	if err != nil {
+		return false, err
+	}
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return false, err
+	}
+	r := respo{}
+	defer response.Body.Close()
+	b, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return false, err
+	}
+	err = json.Unmarshal(b, &r)
+	if err != nil {
+		return false, err
+	}
+	if r.Ok {
+		return true, nil
+	}
+	return false, errors.New("Non ok value receieved from API")
 }
 
 // return a list of the im history

@@ -50,6 +50,14 @@ func TestChannelHistory(t *testing.T) {
 	}
 }
 
+func TestChannelMark(t *testing.T) {
+	LoadToken()
+	_, err := ChannelMark("", "")
+	if err != nil {
+		t.Error(err)
+	}
+}
+
 func TestIMHistory(t *testing.T) {
 	LoadToken()
 	_, err := IMHistory("D028YM1S7", 10)
