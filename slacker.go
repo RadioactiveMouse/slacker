@@ -67,6 +67,14 @@ type TopicOrPurpose struct {
 	LastSet string `json:"last_set"`
 }
 
+type Starred struct {
+	Type    string  `json:"type"`
+	Channel string  `json:"channel"`
+	Message Message `json:"message"`
+	File    string  `json:"file"`
+	Comment string  `json:"comment"`
+}
+
 // load a token from environment variables
 func LoadToken() error {
 	token = os.Getenv("SLACK_API_TOKEN")
@@ -375,4 +383,39 @@ func GroupHistory(channel string, count int) ([]Message, error) {
 		return r.Messages, nil
 	}
 	return r.Messages, errors.New("Non ok value receieved from API")
+}
+
+func Stars(user string, count int) ([]Starred, error) {
+	type respo struct {
+		Ok      bool      `"json:ok"`
+		Starred []Starred `"json:items"`
+	}
+	// modify the params
+	vals := url.Values{}
+	vals.Set("user", user)
+	vals.Set("latest", "")
+	vals.Set("oldest", "")
+	vals.Set("count", strconv.Itoa(count))
+	request, err := generateRequest("stars.list", vals)
+	if err != nil {
+		return nil, err
+	}
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	r := respo{Starred: make([]Starred, 0)}
+	defer response.Body.Close()
+	b, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return r.Starred, err
+	}
+	err = json.Unmarshal(b, &r)
+	if err != nil {
+		return nil, err
+	}
+	if r.Ok {
+		return r.Starred, nil
+	}
+	return r.Starred, errors.New("Non ok value receieved from API")
 }

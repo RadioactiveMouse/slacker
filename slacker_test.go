@@ -90,3 +90,11 @@ func TestGroupHistory(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestStars(t *testing.T) {
+	LoadToken()
+	_, err := Stars("", 10)
+	if err != nil {
+		t.Error(err)
+	}
+}
