@@ -74,3 +74,11 @@ func TestChatPostMessage(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestGroupList(t *testing.T) {
+	LoadToken()
+	_, err := GroupList()
+	if err != nil {
+		t.Error(err)
+	}
+}

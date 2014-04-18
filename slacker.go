@@ -49,6 +49,24 @@ type IM struct {
 	UserDeleted bool   `json:"is_user_deleted"`
 }
 
+// struct to encapsulate Groups
+type Group struct {
+	Id       string         `json:"id"`
+	Name     string         `json:"name"`
+	Created  int64          `json:"created"`
+	Creator  string         `json:"creator"`
+	Archived bool           `json:"is_archived"`
+	Members  []string       `json:"members"`
+	Topic    TopicOrPurpose `json:"topic"`
+	Purpose  TopicOrPurpose `json:"purpose"`
+}
+
+type TopicOrPurpose struct {
+	Value   string `json:"value"`
+	Creator string `json:"creator"`
+	LastSet string `json:"last_set"`
+}
+
 // load a token from environment variables
 func LoadToken() error {
 	token = os.Getenv("SLACK_API_TOKEN")
@@ -293,4 +311,33 @@ func ChatPostMessage(channel string, text string, botName string) (string, error
 		return r.TimeStamp, nil
 	}
 	return r.TimeStamp, errors.New("Non ok value receieved from API")
+}
+
+func GroupList() ([]Group, error) {
+	type respo struct {
+		Ok     bool    `"json:ok"`
+		Groups []Group `"json:groups"`
+	}
+	request, err := generateRequest("groups.list", nil)
+	if err != nil {
+		return nil, err
+	}
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	r := respo{Groups: make([]Group, 0)}
+	defer response.Body.Close()
+	b, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return r.Groups, err
+	}
+	err = json.Unmarshal(b, &r)
+	if err != nil {
+		return nil, err
+	}
+	if r.Ok {
+		return r.Groups, nil
+	}
+	return r.Groups, errors.New("Non ok value receieved from API")
 }
