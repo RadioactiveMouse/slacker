@@ -1,33 +1,44 @@
 package slacker
 
 import (
-	"os"
-	"net/http"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"net/url"
-	"encoding/json"
 	"io/ioutil"
+	"net/http"
+	"net/url"
+	"os"
+	"strconv"
 )
 
 const rootPath = "https://slack.com/api/"
+
 // api token
 var token = ""
 
 // struct to encapsulate the member details
 type Member struct {
-	Id	string	`json:"id"`
-	Name	string	`json:"name"`
-	Deleted	bool	`json:"deleted"`
-	Color	string	`json:"color"`
-	IsAdmin	bool	`json:"is_admin"`
-	IsOwner	bool	`json:"is_owner"`
-	IsPrimaryOwner	bool	`json:"is_primary_owner"`
+	Id             string `json:"id"`
+	Name           string `json:"name"`
+	Deleted        bool   `json:"deleted"`
+	Color          string `json:"color"`
+	IsAdmin        bool   `json:"is_admin"`
+	IsOwner        bool   `json:"is_owner"`
+	IsPrimaryOwner bool   `json:"is_primary_owner"`
 }
 
 // struct to encapsulate channel information
 type Channel struct {
-	Name	string	`"json=name"`
+	Name string `"json=name"`
+}
+
+// struct to encapsulate messages
+type Message struct {
+	Type      string `json:"type"`
+	TimeStamp int64  `json:"ts"`
+	User      string `json:"user"`
+	Text      string `json:"text"`
+	Starred   bool   `json:"is_starred"`
 }
 
 // load a token from environment variables
@@ -40,21 +51,26 @@ func LoadToken() error {
 }
 
 // generate request for query
-func generateRequest(method string) (*http.Request, error) {
+func generateRequest(method string, values url.Values) (*http.Request, error) {
 	route := fmt.Sprintf("%s%s", rootPath, method)
 	u, err := url.Parse(route)
 	if err != nil {
 		return nil, err
 	}
-	query := url.Values{}
-	query.Set("token", token)
-	u.RawQuery = query.Encode()
+	if len(values) > 0 {
+		values.Set("token", token)
+		u.RawQuery = values.Encode()
+	} else {
+		query := url.Values{}
+		query.Set("token", token)
+		u.RawQuery = query.Encode()
+	}
 	return http.NewRequest("GET", u.String(), nil)
 }
 
 // return all the users in the team
 func GetUsers() ([]Member, error) {
-	request, err := generateRequest("users.list")
+	request, err := generateRequest("users.list", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -63,10 +79,10 @@ func GetUsers() ([]Member, error) {
 		return nil, err
 	}
 	type resp struct {
-		Ok	bool
-		Members	[]Member
+		Ok      bool
+		Members []Member
 	}
-	r := resp{Members: make([]Member,0)}
+	r := resp{Members: make([]Member, 0)}
 	defer response.Body.Close()
 	b, err := ioutil.ReadAll(response.Body)
 	if err != nil {
@@ -85,10 +101,9 @@ func GetUsers() ([]Member, error) {
 // check the credentials
 func AuthTest() (bool, error) {
 	type returned struct {
-		Ok	bool	`json="ok"`
-		
+		Ok bool `json="ok"`
 	}
-	request, err := generateRequest("auth.test")
+	request, err := generateRequest("auth.test", nil)
 	if err != nil {
 		return false, err
 	}
@@ -109,10 +124,10 @@ func AuthTest() (bool, error) {
 // return a list the channels
 func ChannelsList() ([]Channel, error) {
 	type respo struct {
-		Ok	bool	`"json:ok"`
-		Channels	[]Channel	`"json:channels"`
+		Ok       bool      `"json:ok"`
+		Channels []Channel `"json:channels"`
 	}
-	request, err := generateRequest("channels.list")
+	request, err := generateRequest("channels.list", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +135,7 @@ func ChannelsList() ([]Channel, error) {
 	if err != nil {
 		return nil, err
 	}
-	r := respo{Channels: make([]Channel,0)}
+	r := respo{Channels: make([]Channel, 0)}
 	defer response.Body.Close()
 	b, err := ioutil.ReadAll(response.Body)
 	if err != nil {
@@ -136,4 +151,38 @@ func ChannelsList() ([]Channel, error) {
 	return r.Channels, errors.New("Non ok value receieved from API")
 }
 
-
+// return a list of the im history
+func IMHistory(channel string, count int) ([]Message, error) {
+	type respo struct {
+		Ok       bool      `"json:ok"`
+		Messages []Message `"json:messages"`
+	}
+	// modify the params
+	vals := url.Values{}
+	vals.Set("channel", channel)
+	vals.Set("latest", "")
+	vals.Set("oldest", "")
+	vals.Set("count", strconv.Itoa(count))
+	request, err := generateRequest("im.history", vals)
+	if err != nil {
+		return nil, err
+	}
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	r := respo{Messages: make([]Message, 0)}
+	defer response.Body.Close()
+	b, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return r.Messages, err
+	}
+	err = json.Unmarshal(b, &r)
+	if err != nil {
+		return nil, err
+	}
+	if r.Ok {
+		return r.Messages, nil
+	}
+	return r.Messages, errors.New("Non ok value receieved from API")
+}
