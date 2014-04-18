@@ -82,3 +82,11 @@ func TestGroupList(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestGroupHistory(t *testing.T) {
+	LoadToken()
+	_, err := GroupHistory("G028ZJX59", 10)
+	if err != nil {
+		t.Error(err)
+	}
+}
