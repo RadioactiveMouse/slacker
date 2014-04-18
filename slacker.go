@@ -260,3 +260,37 @@ func IMList() ([]IM, error) {
 	}
 	return r.IMs, errors.New("Non ok value receieved from API")
 }
+
+func ChatPostMessage(channel string, text string, botName string) (string, error) {
+	type respo struct {
+		Ok        int64  `"json:ok"`
+		TimeStamp string `"json:timestamp"`
+	}
+	// modify the params
+	r := respo{}
+	vals := url.Values{}
+	vals.Set("channel", channel)
+	vals.Set("text", text)
+	vals.Set("username", botName)
+	request, err := generateRequest("chat.postMessage", vals)
+	if err != nil {
+		return r.TimeStamp, err
+	}
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return r.TimeStamp, err
+	}
+	defer response.Body.Close()
+	b, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return r.TimeStamp, err
+	}
+	err = json.Unmarshal(b, &r)
+	if err != nil {
+		return r.TimeStamp, err
+	}
+	if r.Ok == 1 {
+		return r.TimeStamp, nil
+	}
+	return r.TimeStamp, errors.New("Non ok value receieved from API")
+}

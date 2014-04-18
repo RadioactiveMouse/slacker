@@ -66,3 +66,11 @@ func TestIMList(t *testing.T) {
 	}
 	ex.Pect(t, len(ims), 2)
 }
+
+func TestChatPostMessage(t *testing.T) {
+	LoadToken()
+	_, err := ChatPostMessage("C028YLM2M", "Hi from Slacker", "demobot")
+	if err != nil {
+		t.Error(err)
+	}
+}
