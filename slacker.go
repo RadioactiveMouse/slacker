@@ -73,7 +73,13 @@ func GetUsers() ([]Member, error) {
 		return r.Members, err
 	}
 	err = json.Unmarshal(b, &r)
-	return r.Members, err
+	if err != nil {
+		return nil, err
+	}
+	if r.Ok {
+		return r.Members, nil
+	}
+	return nil, errors.New("Non ok value returned from API.")
 }
 
 // check the credentials
@@ -121,5 +127,13 @@ func ChannelsList() ([]Channel, error) {
 		return r.Channels, err
 	}
 	err = json.Unmarshal(b, &r)
-	return r.Channels, err
+	if err != nil {
+		return nil, err
+	}
+	if r.Ok {
+		return r.Channels, nil
+	}
+	return r.Channels, errors.New("Non ok value receieved from API")
 }
+
+
