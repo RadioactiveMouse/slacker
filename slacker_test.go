@@ -44,6 +44,17 @@ func TestListChannel(t *testing.T) {
 
 func TestIMHistory(t *testing.T) {
 	LoadToken()
-	m, _ := IMHistory("jeff", 10)
-	ex.Pect(t, len(m), 0)
+	_, err := IMHistory("D028YM1S7", 10)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestIMList(t *testing.T) {
+	LoadToken()
+	ims, err := IMList()
+	if err != nil {
+		t.Error(err)
+	}
+	ex.Pect(t, len(ims), 2)
 }

@@ -35,10 +35,18 @@ type Channel struct {
 // struct to encapsulate messages
 type Message struct {
 	Type      string `json:"type"`
-	TimeStamp int64  `json:"ts"`
+	TimeStamp string `json:"ts"`
 	User      string `json:"user"`
 	Text      string `json:"text"`
 	Starred   bool   `json:"is_starred"`
+}
+
+// struct to encapsulate IMs
+type IM struct {
+	Id          string `json:"id"`
+	User        string `json:"user"`
+	Created     int64  `json:"created"`
+	UserDeleted bool   `json:"is_user_deleted"`
 }
 
 // load a token from environment variables
@@ -185,4 +193,33 @@ func IMHistory(channel string, count int) ([]Message, error) {
 		return r.Messages, nil
 	}
 	return r.Messages, errors.New("Non ok value receieved from API")
+}
+
+func IMList() ([]IM, error) {
+	type respo struct {
+		Ok  bool `"json:ok"`
+		IMs []IM `"json:ims"`
+	}
+	request, err := generateRequest("im.list", nil)
+	if err != nil {
+		return nil, err
+	}
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	r := respo{IMs: make([]IM, 0)}
+	defer response.Body.Close()
+	b, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return r.IMs, err
+	}
+	err = json.Unmarshal(b, &r)
+	if err != nil {
+		return nil, err
+	}
+	if r.Ok {
+		return r.IMs, nil
+	}
+	return r.IMs, errors.New("Non ok value receieved from API")
 }
