@@ -77,7 +77,7 @@ func generateRequest(method string, values url.Values) (*http.Request, error) {
 }
 
 // return all the users in the team
-func GetUsers() ([]Member, error) {
+func UsersList() ([]Member, error) {
 	request, err := generateRequest("users.list", nil)
 	if err != nil {
 		return nil, err

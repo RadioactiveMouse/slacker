@@ -32,11 +32,11 @@ func TestAuthTest(t *testing.T) {
 
 func TestGetUsers(t *testing.T) {
 	LoadToken()
-	members, _ := GetUsers()
+	members, _ := UsersList()
 	ex.Pect(t, len(members), 2)
 }
 
-func TestListChannel(t *testing.T) {
+func TestChannelsList(t *testing.T) {
 	LoadToken()
 	c, _ := ChannelsList()
 	ex.Pect(t, len(c), 3)
