@@ -160,6 +160,42 @@ func ChannelsList() ([]Channel, error) {
 }
 
 // return a list of the im history
+func ChannelHistory(channel string, count int) ([]Message, error) {
+	type respo struct {
+		Ok       bool      `"json:ok"`
+		Messages []Message `"json:messages"`
+	}
+	// modify the params
+	vals := url.Values{}
+	vals.Set("channel", channel)
+	vals.Set("latest", "")
+	vals.Set("oldest", "")
+	vals.Set("count", strconv.Itoa(count))
+	request, err := generateRequest("channels.history", vals)
+	if err != nil {
+		return nil, err
+	}
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	r := respo{Messages: make([]Message, 0)}
+	defer response.Body.Close()
+	b, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return r.Messages, err
+	}
+	err = json.Unmarshal(b, &r)
+	if err != nil {
+		return nil, err
+	}
+	if r.Ok {
+		return r.Messages, nil
+	}
+	return r.Messages, errors.New("Non ok value receieved from API")
+}
+
+// return a list of the im history
 func IMHistory(channel string, count int) ([]Message, error) {
 	type respo struct {
 		Ok       bool      `"json:ok"`
@@ -195,6 +231,7 @@ func IMHistory(channel string, count int) ([]Message, error) {
 	return r.Messages, errors.New("Non ok value receieved from API")
 }
 
+// list the IMs
 func IMList() ([]IM, error) {
 	type respo struct {
 		Ok  bool `"json:ok"`

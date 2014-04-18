@@ -42,6 +42,14 @@ func TestChannelsList(t *testing.T) {
 	ex.Pect(t, len(c), 3)
 }
 
+func TestChannelHistory(t *testing.T) {
+	LoadToken()
+	_, err := ChannelHistory("C028YLM2M", 10)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
 func TestIMHistory(t *testing.T) {
 	LoadToken()
 	_, err := IMHistory("D028YM1S7", 10)
