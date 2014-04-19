@@ -75,6 +75,45 @@ type Starred struct {
 	Comment string  `json:"comment"`
 }
 
+type File struct {
+	Id                 string    `json:"id"`
+	TimeStamp          string    `json:"timestamp"`
+	Name               string    `json:"name"`
+	Title              string    `json:"title"`
+	MimeType           string    `json:"mimetype"`
+	FileType           string    `json:"filetype"`
+	Pretty             string    `json:"pretty_type"`
+	User               string    `json:"user"`
+	Mode               string    `json:"mode"`
+	Editable           bool      `json:"editable"`
+	IsExternal         bool      `json:"is_external"`
+	ExternalType       string    `json:"external_type"`
+	Size               string    `json:"size"`
+	Url                string    `json:"url"`
+	UrlDownload        string    `json:"url_download"`
+	UrlPrivate         bool      `json:"url_private"`
+	UrlPrivateDownload string    `json:"url_private_download"`
+	Thumbnail64        string    `json:"thumb_64"`
+	Thumbnail80        string    `json:"thumb_80"`
+	Thumbnail360       string    `json:"thumb_360"`
+	Thumbnail360Gif    string    `json:"thumb_360_gif"`
+	Thumbnail360W      string    `json:"thumb_360_w"`
+	Thumbnail360H      string    `json:"thumb_360_h"`
+	Permalink          string    `json:"permalink"`
+	EditLink           string    `json:"edit_link"`
+	Preview            string    `json:"preview"`
+	PreviewHighlight   string    `json:"preview_highlight"`
+	Lines              int       `json:"lines"`
+	LinesMore          int       `json:"lines_more"`
+	IsPublic           bool      `json:"is_public"`
+	PublicUrlShared    bool      `json:"public_url_shared"`
+	Channels           []Channel `json:"channels"`
+	Groups             []Group   `json:"groups"`
+	InitialComment     string    `json:"initial_comment"`
+	NumStars           int       `json:num_stars"`
+	IsStarred          bool      `json:"is_starred"`
+}
+
 // load a token from environment variables
 func LoadToken() error {
 	token = os.Getenv("SLACK_API_TOKEN")
@@ -462,4 +501,38 @@ func Stars(user string, count int) ([]Starred, error) {
 	}
 	return r.Starred, errors.New(r.Error)
 }
+
+func FilesInfo(file string, count int) (File, error) {
+	type respo struct {
+		Ok   bool `"json:ok"`
+		File File `"json:file"`
+		//Comments []Comment `json:"comments"`
+		Error string `json:"error"`
+	}
+	// modify the params
+	vals := url.Values{}
+	vals.Set("file", file)
+	vals.Set("count", strconv.Itoa(count))
+	request, err := generateRequest("files.info", vals)
+	if err != nil {
+		return File{}, err
+	}
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return File{}, err
+	}
+	r := respo{} //Comments: make([]Comment, 0)}
+	defer response.Body.Close()
+	b, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return r.File, err
+	}
+	err = json.Unmarshal(b, &r)
+	if err != nil {
+		return File{}, err
+	}
+	if r.Ok {
+		return r.File, nil
+	}
+	return r.File, errors.New(r.Error)
 }

@@ -106,3 +106,11 @@ func TestStars(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestFileInfo(t *testing.T) {
+	LoadToken()
+	_, err := FilesInfo("demo", 1)
+	if err != nil {
+		ex.Pect(t, fmt.Sprintf("%s", err), "file_not_found")
+	}
+}
