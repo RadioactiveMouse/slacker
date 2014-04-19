@@ -35,14 +35,18 @@ func TestAuthTest(t *testing.T) {
 
 func TestGetUsers(t *testing.T) {
 	LoadToken()
-	members, _ := UsersList()
-	ex.Pect(t, len(members), 2)
+	_, err := UsersList()
+	if err != nil {
+		t.Error(err)
+	}
 }
 
 func TestChannelsList(t *testing.T) {
 	LoadToken()
-	c, _ := ChannelsList()
-	ex.Pect(t, len(c), 3)
+	_, err := ChannelsList()
+	if err != nil {
+		t.Error(err)
+	}
 }
 
 func TestChannelHistory(t *testing.T) {
@@ -71,11 +75,10 @@ func TestIMHistory(t *testing.T) {
 
 func TestIMList(t *testing.T) {
 	LoadToken()
-	ims, err := IMList()
+	_, err := IMList()
 	if err != nil {
 		t.Error(err)
 	}
-	ex.Pect(t, len(ims), 2)
 }
 
 func TestChatPostMessage(t *testing.T) {
