@@ -536,3 +536,34 @@ func FilesInfo(file string, count int) (File, error) {
 	}
 	return r.File, errors.New(r.Error)
 }
+
+func FilesList() ([]File, error) {
+	type respo struct {
+		Ok    bool   `"json:ok"`
+		Files []File `"json:files"`
+		Error string `json:"error"`
+	}
+	// modify the params
+	r := respo{Files: make([]File, 0)}
+	request, err := generateRequest("files.list", nil)
+	if err != nil {
+		return r.Files, err
+	}
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return r.Files, err
+	}
+	defer response.Body.Close()
+	b, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return r.Files, err
+	}
+	err = json.Unmarshal(b, &r)
+	if err != nil {
+		return r.Files, err
+	}
+	if r.Ok {
+		return r.Files, nil
+	}
+	return r.Files, errors.New(r.Error)
+}

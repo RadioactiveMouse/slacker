@@ -114,3 +114,11 @@ func TestFileInfo(t *testing.T) {
 		ex.Pect(t, fmt.Sprintf("%s", err), "file_not_found")
 	}
 }
+
+func TestFilesList(t *testing.T) {
+	LoadToken()
+	_, err := FilesList()
+	if err != nil {
+		t.Error(err)
+	}
+}
