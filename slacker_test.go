@@ -52,7 +52,7 @@ func TestChannelHistory(t *testing.T) {
 
 func TestChannelMark(t *testing.T) {
 	LoadToken()
-	_, err := ChannelMark("", "")
+	_, err := ChannelMark("C028YLM2M", "")
 	if err != nil {
 		t.Error(err)
 	}

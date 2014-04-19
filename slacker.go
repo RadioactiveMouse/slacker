@@ -115,6 +115,7 @@ func UsersList() ([]Member, error) {
 	type resp struct {
 		Ok      bool
 		Members []Member
+		Error   string `json:"error"`
 	}
 	r := resp{Members: make([]Member, 0)}
 	defer response.Body.Close()
@@ -129,13 +130,14 @@ func UsersList() ([]Member, error) {
 	if r.Ok {
 		return r.Members, nil
 	}
-	return nil, errors.New("Non ok value returned from API.")
+	return nil, errors.New(r.Error)
 }
 
 // check the credentials
 func AuthTest() (bool, error) {
 	type returned struct {
-		Ok bool `json="ok"`
+		Ok    bool   `json="ok"`
+		Error string `json:"error"`
 	}
 	request, err := generateRequest("auth.test", nil)
 	if err != nil {
@@ -160,6 +162,7 @@ func ChannelsList() ([]Channel, error) {
 	type respo struct {
 		Ok       bool      `"json:ok"`
 		Channels []Channel `"json:channels"`
+		Error    string    `json:"error"`
 	}
 	request, err := generateRequest("channels.list", nil)
 	if err != nil {
@@ -182,7 +185,7 @@ func ChannelsList() ([]Channel, error) {
 	if r.Ok {
 		return r.Channels, nil
 	}
-	return r.Channels, errors.New("Non ok value receieved from API")
+	return r.Channels, errors.New(r.Error)
 }
 
 // return a list of the im history
@@ -190,6 +193,7 @@ func ChannelHistory(channel string, count int) ([]Message, error) {
 	type respo struct {
 		Ok       bool      `"json:ok"`
 		Messages []Message `"json:messages"`
+		Error    string    `json:"error"`
 	}
 	// modify the params
 	vals := url.Values{}
@@ -218,12 +222,13 @@ func ChannelHistory(channel string, count int) ([]Message, error) {
 	if r.Ok {
 		return r.Messages, nil
 	}
-	return r.Messages, errors.New("Non ok value receieved from API")
+	return r.Messages, errors.New(r.Error)
 }
 
 func ChannelMark(channel string, timestamp string) (bool, error) {
 	type respo struct {
-		Ok bool `"json:ok"`
+		Ok    bool   `"json:ok"`
+		Error string `json:"error"`
 	}
 	// modify the params
 	vals := url.Values{}
@@ -250,7 +255,7 @@ func ChannelMark(channel string, timestamp string) (bool, error) {
 	if r.Ok {
 		return true, nil
 	}
-	return false, errors.New("Non ok value receieved from API")
+	return false, errors.New(r.Error)
 }
 
 // return a list of the im history
@@ -258,6 +263,7 @@ func IMHistory(channel string, count int) ([]Message, error) {
 	type respo struct {
 		Ok       bool      `"json:ok"`
 		Messages []Message `"json:messages"`
+		Error    string    `json:"error"`
 	}
 	// modify the params
 	vals := url.Values{}
@@ -286,14 +292,15 @@ func IMHistory(channel string, count int) ([]Message, error) {
 	if r.Ok {
 		return r.Messages, nil
 	}
-	return r.Messages, errors.New("Non ok value receieved from API")
+	return r.Messages, errors.New(r.Error)
 }
 
 // list the IMs
 func IMList() ([]IM, error) {
 	type respo struct {
-		Ok  bool `"json:ok"`
-		IMs []IM `"json:ims"`
+		Ok    bool   `"json:ok"`
+		IMs   []IM   `"json:ims"`
+		Error string `json:"error"`
 	}
 	request, err := generateRequest("im.list", nil)
 	if err != nil {
@@ -316,13 +323,14 @@ func IMList() ([]IM, error) {
 	if r.Ok {
 		return r.IMs, nil
 	}
-	return r.IMs, errors.New("Non ok value receieved from API")
+	return r.IMs, errors.New(r.Error)
 }
 
 func ChatPostMessage(channel string, text string, botName string) (string, error) {
 	type respo struct {
 		Ok        int64  `"json:ok"`
 		TimeStamp string `"json:timestamp"`
+		Error     string `json:"error"`
 	}
 	// modify the params
 	r := respo{}
@@ -350,13 +358,14 @@ func ChatPostMessage(channel string, text string, botName string) (string, error
 	if r.Ok == 1 {
 		return r.TimeStamp, nil
 	}
-	return r.TimeStamp, errors.New("Non ok value receieved from API")
+	return r.TimeStamp, errors.New(r.Error)
 }
 
 func GroupList() ([]Group, error) {
 	type respo struct {
 		Ok     bool    `"json:ok"`
 		Groups []Group `"json:groups"`
+		Error  string  `json:"error"`
 	}
 	request, err := generateRequest("groups.list", nil)
 	if err != nil {
@@ -379,13 +388,14 @@ func GroupList() ([]Group, error) {
 	if r.Ok {
 		return r.Groups, nil
 	}
-	return r.Groups, errors.New("Non ok value receieved from API")
+	return r.Groups, errors.New(r.Error)
 }
 
 func GroupHistory(channel string, count int) ([]Message, error) {
 	type respo struct {
 		Ok       bool      `"json:ok"`
 		Messages []Message `"json:messages"`
+		Error    string    `json:"error"`
 	}
 	// modify the params
 	vals := url.Values{}
@@ -414,13 +424,14 @@ func GroupHistory(channel string, count int) ([]Message, error) {
 	if r.Ok {
 		return r.Messages, nil
 	}
-	return r.Messages, errors.New("Non ok value receieved from API")
+	return r.Messages, errors.New(r.Error)
 }
 
 func Stars(user string, count int) ([]Starred, error) {
 	type respo struct {
 		Ok      bool      `"json:ok"`
 		Starred []Starred `"json:items"`
+		Error   string    `json:"error"`
 	}
 	// modify the params
 	vals := url.Values{}
@@ -449,5 +460,6 @@ func Stars(user string, count int) ([]Starred, error) {
 	if r.Ok {
 		return r.Starred, nil
 	}
-	return r.Starred, errors.New("Non ok value receieved from API")
+	return r.Starred, errors.New(r.Error)
+}
 }
