@@ -105,7 +105,7 @@ func TestGroupHistory(t *testing.T) {
 	}
 }
 
-func TestStars(t *testing.T) {
+func TestStarsList(t *testing.T) {
 	LoadToken()
 	_, err := Stars("", 10)
 	if err != nil {

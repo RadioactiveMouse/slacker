@@ -475,7 +475,7 @@ func GroupHistory(channel string, count int) ([]Message, error) {
 	return r.Messages, errors.New(r.Error)
 }
 
-func Stars(user string, count int) ([]Starred, error) {
+func StarsList(user string, count int) ([]Starred, error) {
 	type respo struct {
 		Ok      bool      `"json:ok"`
 		Starred []Starred `"json:items"`
