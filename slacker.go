@@ -29,7 +29,16 @@ type Member struct {
 
 // struct to encapsulate channel information
 type Channel struct {
-	Name string `"json:name"`
+	Id         string         `json:"id"`
+	Name       string         `json:"name"`
+	Created    int64          `json:"created"`
+	Creator    string         `json:"creator"`
+	Archived   bool           `json:"is_archived"`
+	IsMember   bool           `json:"is_member"`
+	NumMembers int64          `json:"num_members"`
+	General    bool           `json:"is_general"`
+	Topic      TopicOrPurpose `json:"topic"`
+	Purpose    TopicOrPurpose `json:"purpose"`
 }
 
 // struct to encapsulate messages
