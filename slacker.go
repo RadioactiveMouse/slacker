@@ -27,6 +27,20 @@ type Member struct {
 	IsPrimaryOwner bool   `json:"is_primary_owner"`
 }
 
+type Profile struct {
+	Firstname string `json:"first_name"`
+	Lastname  string `json:"last_name"`
+	RealName  string `json:"real_name"`
+	Email     string `json:"email"`
+	Skype     string `json:"skype"`
+	Phone     string `json:"phone"`
+	Image24   string `json:"image_24"`
+	Image32   string `json:"image_32"`
+	Image48   string `json:"image_48"`
+	Image72   string `json:"image_72"`
+	Image192  string `json:"image_192"`
+}
+
 // struct to encapsulate channel information
 type Channel struct {
 	Id         string         `json:"id"`
