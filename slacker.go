@@ -77,7 +77,7 @@ type Starred struct {
 
 type File struct {
 	Id                 string    `json:"id"`
-	TimeStamp          string    `json:"timestamp"`
+	TimeStamp          int64     `json:"timestamp"`
 	Name               string    `json:"name"`
 	Title              string    `json:"title"`
 	MimeType           string    `json:"mimetype"`
@@ -88,10 +88,10 @@ type File struct {
 	Editable           bool      `json:"editable"`
 	IsExternal         bool      `json:"is_external"`
 	ExternalType       string    `json:"external_type"`
-	Size               string    `json:"size"`
+	Size               int64     `json:"size"`
 	Url                string    `json:"url"`
 	UrlDownload        string    `json:"url_download"`
-	UrlPrivate         bool      `json:"url_private"`
+	UrlPrivate         string    `json:"url_private"`
 	UrlPrivateDownload string    `json:"url_private_download"`
 	Thumbnail64        string    `json:"thumb_64"`
 	Thumbnail80        string    `json:"thumb_80"`
