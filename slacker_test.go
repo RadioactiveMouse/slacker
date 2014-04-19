@@ -26,10 +26,16 @@ func TestGenerateRequestWithValues(t *testing.T) {
 
 func TestAuthTest(t *testing.T) {
 	token = ""
-	notok, _ := AuthTest()
+	notok, err := AuthTest()
+	if err != nil {
+		t.Error(err)
+	}
 	ex.Pect(t, notok, false)
 	LoadToken()
-	ok, _ := AuthTest()
+	ok, err := AuthTest()
+	if err != nil {
+		t.Error(err)
+	}
 	ex.Pect(t, ok, true)
 }
 
