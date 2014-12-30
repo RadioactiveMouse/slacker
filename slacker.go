@@ -222,8 +222,8 @@ func AuthTest() (bool, error) {
 // return a list the channels
 func ChannelsList() ([]Channel, error) {
 	type respo struct {
-		Ok       bool      `"json:ok"`
-		Channels []Channel `"json:channels"`
+		Ok       bool      `json:"ok"`
+		Channels []Channel `json:"channels"`
 		Error    string    `json:"error"`
 	}
 	request, err := generateRequest("channels.list", nil)
@@ -253,8 +253,8 @@ func ChannelsList() ([]Channel, error) {
 // return a list of the im history
 func ChannelHistory(channel string, count int) ([]Message, error) {
 	type respo struct {
-		Ok       bool      `"json:ok"`
-		Messages []Message `"json:messages"`
+		Ok       bool      `json:"ok"`
+		Messages []Message `json:"messages"`
 		Error    string    `json:"error"`
 	}
 	// modify the params
@@ -289,7 +289,7 @@ func ChannelHistory(channel string, count int) ([]Message, error) {
 
 func ChannelMark(channel string, timestamp string) (bool, error) {
 	type respo struct {
-		Ok    bool   `"json:ok"`
+		Ok    bool   `json:"ok"`
 		Error string `json:"error"`
 	}
 	// modify the params
@@ -323,8 +323,8 @@ func ChannelMark(channel string, timestamp string) (bool, error) {
 // return a list of the im history
 func IMHistory(channel string, count int) ([]Message, error) {
 	type respo struct {
-		Ok       bool      `"json:ok"`
-		Messages []Message `"json:messages"`
+		Ok       bool      `json:"ok"`
+		Messages []Message `json:"messages"`
 		Error    string    `json:"error"`
 	}
 	// modify the params
@@ -360,8 +360,8 @@ func IMHistory(channel string, count int) ([]Message, error) {
 // list the IMs
 func IMList() ([]IM, error) {
 	type respo struct {
-		Ok    bool   `"json:ok"`
-		IMs   []IM   `"json:ims"`
+		Ok    bool   `json:"ok"`
+		IMs   []IM   `json:"ims"`
 		Error string `json:"error"`
 	}
 	request, err := generateRequest("im.list", nil)
@@ -390,8 +390,8 @@ func IMList() ([]IM, error) {
 
 func ChatPostMessage(channel string, text string, botName string) (string, error) {
 	type respo struct {
-		Ok        int64  `"json:ok"`
-		TimeStamp string `"json:timestamp"`
+		Ok        int64  `json:"ok"`
+		TimeStamp string `json:"timestamp"`
 		Error     string `json:"error"`
 	}
 	// modify the params
@@ -425,8 +425,8 @@ func ChatPostMessage(channel string, text string, botName string) (string, error
 
 func GroupList() ([]Group, error) {
 	type respo struct {
-		Ok     bool    `"json:ok"`
-		Groups []Group `"json:groups"`
+		Ok     bool    `json:"ok"`
+		Groups []Group `json:"groups"`
 		Error  string  `json:"error"`
 	}
 	request, err := generateRequest("groups.list", nil)
@@ -455,8 +455,8 @@ func GroupList() ([]Group, error) {
 
 func GroupHistory(channel string, count int) ([]Message, error) {
 	type respo struct {
-		Ok       bool      `"json:ok"`
-		Messages []Message `"json:messages"`
+		Ok       bool      `json:"ok"`
+		Messages []Message `json:"messages"`
 		Error    string    `json:"error"`
 	}
 	// modify the params
@@ -491,8 +491,8 @@ func GroupHistory(channel string, count int) ([]Message, error) {
 
 func StarsList(user string, count int) ([]Starred, error) {
 	type respo struct {
-		Ok      bool      `"json:ok"`
-		Starred []Starred `"json:items"`
+		Ok      bool      `json:"ok"`
+		Starred []Starred `json:"items"`
 		Error   string    `json:"error"`
 	}
 	// modify the params
@@ -527,8 +527,8 @@ func StarsList(user string, count int) ([]Starred, error) {
 
 func FilesInfo(file string, count int) (File, error) {
 	type respo struct {
-		Ok   bool `"json:ok"`
-		File File `"json:file"`
+		Ok   bool `json:"ok"`
+		File File `json:"file"`
 		//Comments []Comment `json:"comments"`
 		Error string `json:"error"`
 	}
@@ -562,8 +562,8 @@ func FilesInfo(file string, count int) (File, error) {
 
 func FilesList() ([]File, error) {
 	type respo struct {
-		Ok    bool   `"json:ok"`
-		Files []File `"json:files"`
+		Ok    bool   `json:"ok"`
+		Files []File `json:"files"`
 		Error string `json:"error"`
 	}
 	// modify the params
