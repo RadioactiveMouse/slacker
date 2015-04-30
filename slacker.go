@@ -390,7 +390,7 @@ func IMList() ([]IM, error) {
 
 func ChatPostMessage(channel string, text string, botName string) (string, error) {
 	type respo struct {
-		Ok        int64  `json:"ok"`
+		Ok        bool  `json:"ok"`
 		TimeStamp string `json:"timestamp"`
 		Error     string `json:"error"`
 	}
@@ -417,7 +417,7 @@ func ChatPostMessage(channel string, text string, botName string) (string, error
 	if err != nil {
 		return r.TimeStamp, err
 	}
-	if r.Ok == 1 {
+	if r.Ok {
 		return r.TimeStamp, nil
 	}
 	return r.TimeStamp, errors.New(r.Error)
